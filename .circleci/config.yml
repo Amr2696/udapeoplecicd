@@ -133,10 +133,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      -run:
-          name: Regions
-          command: |
-            aws configure set region us-east-1
       - run:
           name: Ensure back-end infrastructure exists
           command: |

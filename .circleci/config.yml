@@ -134,7 +134,7 @@ jobs:
     steps:
       - checkout
       -run:
-          name: Region
+          name: Regions
           command: |
             aws configure set region us-east-1
       - run:

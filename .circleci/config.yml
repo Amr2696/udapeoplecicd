@@ -22,13 +22,13 @@ commands:
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
   destroy-environment:
+    docker:
+      - image: amazon/aws-cli
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       Workflow_ID:
         type: string 
-        default: "${CIRCLE_WORKFLOW_ID:0:7}"   
-    docker:
-      - image: amazon/aws-cli
+        default: "${CIRCLE_WORKFLOW_ID:0:7}"
     steps:
       - run:
           name: Destroy environments

@@ -132,8 +132,8 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
-     - checkout
-     - run:
+      - checkout
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \

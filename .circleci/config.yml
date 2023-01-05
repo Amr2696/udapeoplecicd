@@ -267,48 +267,48 @@ jobs:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 
-    deploy-frontend:
-        executor: node
-        steps:
-          - checkout
-          - attach_workspace:
-              at: .
-          - run:
-              name: Install AWS CLI dependencies
-              working_directory: /tmp
-              command: |
-                sudo apt-get update && sudo apt-get install -yy less
-                curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                unzip awscliv2.zip
-                sudo ./aws/install
-          - run:
-              name: Rebuild frontend with backend API Url
-              working_directory: ./frontend
-              command: |
-                export BACKEND_IP=$(aws ec2 describe-instances \
-                  --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                  --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                  --output text)
-                echo "API_URL=http://${BACKEND_IP}:3030" 
-                #echo "${API_URL}"
-                npm run build
-          - run:
-              name: Deploy frontend objects to S3
-              working_directory: ./frontend
-              command: |
-                aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-          - persist_to_workspace:
-              root: .
-              paths:
-                - frontend/dist
-          - destroy_environment:
-              id: ${CIRCLE_WORKFLOW_ID:0:7}
-              when: on_fail
-          - revert_migrations:
-              id: ${CIRCLE_WORKFLOW_ID:0:7}
-              when: on_fail
-              
-    deploy-backend:
+  deploy-frontend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install AWS CLI dependencies
+          working_directory: /tmp
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Rebuild frontend with backend API Url
+          working_directory: ./frontend
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            echo "API_URL=http://${BACKEND_IP}:3030" 
+            #echo "${API_URL}"
+            npm run build
+      - run:
+          name: Deploy frontend objects to S3
+          working_directory: ./frontend
+          command: |
+            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/dist
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
+      - revert_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          when: on_fail
+
+  deploy-backend:
     executor: python
     steps:
       - checkout
@@ -420,8 +420,8 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:

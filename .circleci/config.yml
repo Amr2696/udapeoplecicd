@@ -10,12 +10,12 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-  
+
   install_ansible:
-    description: Install Ansible 
+    description: Install Ansible
     steps:
       - run:
-          name: Install Ansible 
+          name: Install Ansible
           command: |
             sudo apt update
             sudo apt install software-properties-common -y
@@ -37,24 +37,27 @@ commands:
             aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
 
-  revert-migrations:
-      description: Revert the last migration if successfully run in the current workflow.
-      parameters:
-        Workflow_ID:
-          type: string 
-          default: "${CIRCLE_WORKFLOW_ID:0:7}"
-      steps:
-        - run:
-            name: Revert migrations
-            when: on_fail
-            command: |
-              SUCCESS=$(curl --insecure http://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
-              if(( $SUCCESS==1 )); 
-              then
-                cd ~/project/backend
-                npm install
-                npm run migration:revert
-              fi
+  revert_migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      when:
+        type: string
+      id:
+        type: string
+    steps:
+      - run:
+          name: Revert migrations
+          working_directory: ./backend
+          command: |
+            SUCCESS=$(curl --insecure "https://kvdb.io/GcvAJSPvEZt4axA4hkbXJ2/migration_<< parameters.id >>")
+            echo $SUCCESS
+            if [[ "$SUCCESS" == "success" ]]
+            then
+              pwd
+              ls -la
+              npm run migrations:revert
+            fi
+          when: on_fail
 
 jobs:
   build-frontend:
@@ -223,7 +226,7 @@ jobs:
             npm cache clean --force
             npm install
             npm run migrations > migrations_dump.txt
-            
+
       - run:
           name: Sending migration status to kvdb
           command: |
@@ -233,7 +236,6 @@ jobs:
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-
 
 #   deploy-frontend:
 #     docker:

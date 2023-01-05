@@ -301,7 +301,7 @@ jobs:
           root: .
           paths:
             - frontend/dist
-      - destroy_environment:
+      - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
       - revert_migrations:
@@ -313,7 +313,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["d4:35:43:07:b2:27:b9:33:c8:70:b4:2d:6f:55:49:ac"]
+          fingerprints: ["85:36:82:98:3f:bf:60:c4:57:5a:e6:5d:78:3e:31:c4"]
       - attach_workspace:
           at: .
       - run:
@@ -332,7 +332,7 @@ jobs:
             ansible-playbook \
                -i .circleci/ansible/inventory* \
                configure-server.yaml  -vv
-      - destroy_environment:
+      - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
       - revert_migrations:

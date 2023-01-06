@@ -1,14 +1,5 @@
 version: 2.1
-executors:
-  node:
-    docker:
-      - image: circleci/node:13.8.0
-  python:
-    docker:
-      - image: python:3.9.0-alpine
-  aws:
-    docker:
-      - image: amazon/aws-cli
+
 commands:
   install_awscli:
     description: Install AWS CLI v2
@@ -19,12 +10,12 @@ commands:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-
+  
   install_ansible:
-    description: Install Ansible
+    description: Install Ansible 
     steps:
       - run:
-          name: Install Ansible
+          name: Install Ansible 
           command: |
             sudo apt update
             sudo apt install software-properties-common -y
@@ -46,27 +37,24 @@ commands:
             aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
 
-  revert_migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      when:
-        type: string
-      id:
-        type: string
-    steps:
-      - run:
-          name: Revert migrations
-          working_directory: ./backend
-          command: |
-            SUCCESS=$(curl --insecure "https://kvdb.io/GcvAJSPvEZt4axA4hkbXJ2/migration_<< parameters.id >>")
-            echo $SUCCESS
-            if [[ "$SUCCESS" == "success" ]]
-            then
-              pwd
-              ls -la
-              npm run migrations:revert
-            fi
-          when: on_fail
+  revert-migrations:
+      description: Revert the last migration if successfully run in the current workflow.
+      parameters:
+        Workflow_ID:
+          type: string 
+          default: "${CIRCLE_WORKFLOW_ID:0:7}"
+      steps:
+        - run:
+            name: Revert migrations
+            when: on_fail
+            command: |
+              SUCCESS=$(curl --insecure http://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+              if(( $SUCCESS==1 )); 
+              then
+                cd ~/project/backend
+                npm install
+                npm run migration:revert
+              fi
 
 jobs:
   build-frontend:
@@ -223,38 +211,29 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
-    executor: node
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI dependencies
-          working_directory: /tmp
-          command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+      - install_awscli
       - run:
           name: Run migrations
-          working_directory: ./backend
           command: |
-            sudo npm i || cat /root/.npm/_logs/2022-*debug.log
-            sudo npm run migrations >> migration_status || sudo cat migration_status
+            cd backend
+            npm cache clean --force
+            npm install
+            npm run migrations > migrations_dump.txt
+            
       - run:
-          name: Send migration results to Kvdb
-          working_directory: ./backend
+          name: Sending migration status to kvdb
           command: |
-            if grep -q "has been executed successfully" migration_status
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/GcvAJSPvEZt4axA4hkbXJ2/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
-            else
-              curl --insecure https://kvdb.io/GcvAJSPvEZt4axA4hkbXJ2/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '0'
+            curl http://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
-            echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+
 
 #   deploy-frontend:
 #     docker:

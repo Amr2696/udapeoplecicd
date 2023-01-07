@@ -273,11 +273,9 @@ jobs:
           paths:
             - frontend/dist
       - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   deploy-backend:
     executor: python
     steps:
@@ -303,11 +301,9 @@ jobs:
                -i .circleci/ansible/inventory* \
                configure-server.yaml  -vv
       - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image

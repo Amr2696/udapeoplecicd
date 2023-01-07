@@ -272,10 +272,10 @@ jobs:
           root: .
           paths:
             - frontend/dist
-      - destroy_environment:
+      - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-      - revert_migrations:
+      - revert-migrations:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
   deploy-backend:
@@ -302,10 +302,10 @@ jobs:
             ansible-playbook \
                -i .circleci/ansible/inventory* \
                configure-server.yaml  -vv
-      - destroy_environment:
+      - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-      - revert_migrations:
+      - revert-migrations:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
 #   smoke-test:

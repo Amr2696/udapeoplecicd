@@ -7,7 +7,7 @@ executors:
     docker:
       - image: python:3.9.0-alpine
   aws:
-    docker: 
+    docker:
       - image: amazon/aws-cli
 commands:
   install_awscli:
@@ -238,7 +238,7 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-   deploy-frontend:
+  deploy-frontend:
     executor: node
     steps:
       - checkout
@@ -278,7 +278,7 @@ jobs:
       - revert_migrations:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
-   deploy-backend:
+  deploy-backend:
     executor: python
     steps:
       - checkout

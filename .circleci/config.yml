@@ -273,7 +273,6 @@ jobs:
           name: Deploy frontend objects to S3
           working_directory: ./frontend
           command: |
-            sudo npm install -g npm@13.8.0
             rm -rf node_modules
             npm install
             npm run build

@@ -264,13 +264,13 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo "API_URL=http://${BACKEND_IP}:3030" 
-            #echo "${API_URL}"
+            echo "This is api_url : ${API_URL}"
             npm run build
       - run:
           name: Deploy frontend objects to S3
           working_directory: ./frontend
           command: |
-            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+            aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive || cat /home/circleci/.npm/_logs/2023-01-*debug.log
       - persist_to_workspace:
           root: .
           paths:

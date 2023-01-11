@@ -266,6 +266,7 @@ jobs:
             echo "API_URL=http://${BACKEND_IP}:3030"
             echo "This is api_url : ${API_URL}"
             npm run build
+            cat /home/circleci/.npm/_logs/2023-01-*debug.log
       - run:
           name: Deploy frontend objects to S3
           working_directory: ./frontend

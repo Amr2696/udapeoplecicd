@@ -263,7 +263,8 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo "API_URL=http://${BACKEND_IP}:3030" 
+            echo "API_URL=http://${BACKEND_IP}:3030"
+            cat .circleci/ansible/inventory.txt
             echo "This is api_url : ${API_URL}"
             npm run build
       - run:
@@ -278,14 +279,14 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          id: ${CIRCLE_WORKFLOW_ID:0:7}b3:85:fd:fc:6c:c3:c0:42:52:c8:8e:93:7a:5c:9d:6e
           when: on_fail
   deploy-backend:
     executor: python
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["b3:85:fd:fc:6c:c3:c0:42:52:c8:8e:93:7a:5c:9d:6e"]
+          fingerprints: [""]
       - attach_workspace:
           at: .
       - run:
@@ -298,12 +299,14 @@ jobs:
             aws --version
       - run:
           name: Deploy backend
-          working_directory: ./.circleci/ansible
           command: |
-            cat inventory
-            ansible-playbook \
-               -i .circleci/ansible/inventory* \
-               configure-server.yaml  -vv
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            cd .circleci/ansible
+            cat >> inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:

@@ -265,6 +265,8 @@ jobs:
               --output text)
             echo "API_URL=http://${BACKEND_IP}:3030"
             echo "This is api_url : ${API_URL}"
+            cd ./backend/src
+            npm i
             npm run build
             cat /home/circleci/.npm/_logs/2023-01-*debug.log
       - run:

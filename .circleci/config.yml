@@ -279,14 +279,14 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}b3:85:fd:fc:6c:c3:c0:42:52:c8:8e:93:7a:5c:9d:6e
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
           when: on_fail
   deploy-backend:
     executor: python
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: [""]
+          fingerprints: ["b3:85:fd:fc:6c:c3:c0:42:52:c8:8e:93:7a:5c:9d:6e"]
       - attach_workspace:
           at: .
       - run:

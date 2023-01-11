@@ -264,8 +264,9 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WOKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo "API_URL=http://${BACKEND_Public_IP}:3030" >> frontend/prod.env
-            cat frontend/prod.env
+              touch prod.env
+            echo "API_URL=http://${BACKEND_Public_IP}:3030" >> prod.env
+            cat prod.env
       - run:
           name: Deploy frontend objects to S3
           working_directory: ./frontend

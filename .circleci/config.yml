@@ -264,7 +264,6 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo "API_URL=http://${BACKEND_IP}:3030"
-            cat .circleci/ansible/inventory.txt
             echo "This is api_url : ${API_URL}"
             npm run build
       - run:

@@ -103,7 +103,7 @@ jobs:
       - run:
           name: npm run build
           working_directory: ./backend
-          command:
+          command: |
           npm cache clean
           rm -rf node_modules
           npm install

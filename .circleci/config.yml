@@ -104,14 +104,13 @@ jobs:
           name: npm run build
           working_directory: ./backend
           command: |
-            npm run clean
             rm -rf node_modules
             npm install
             npm run build
       - persist_to_workspace:
           root: .
           paths:
-            - backend/dist
+            - backend/node_modules
 
   test-frontend:
     docker:

@@ -93,7 +93,7 @@ jobs:
           command: |
             cd frontend
             npm cache clean --force
-            npm ci
+            npm i
             npm run build
       - save_cache:
           paths: [frontend/node_modules]

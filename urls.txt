@@ -1,5 +1,0 @@
-Public Url to GitHub repository (not private) [URL01]
-
-https://github.com/Amr2696/udapeoplecicd
-
-Public URL for your S3 Bucket [URL02]

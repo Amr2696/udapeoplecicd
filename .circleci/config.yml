@@ -82,22 +82,17 @@ commands:
 
 jobs:
   build-frontend:
-    docker:
-      - image: cimg/node:13.8.0
+    executor: node
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-deps]
       - run:
-          name: Build front-end
-          command: |
-            cd frontend
-            npm cache clean --force
-            npm i
-            npm run build
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-deps
+          name: npm install
+          working_directory: ./frontend
+          command: ls -la && npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - frontend/node_modules
 
   build-backend:
     docker:

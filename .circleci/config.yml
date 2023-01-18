@@ -103,7 +103,11 @@ jobs:
       - run:
           name: npm run build
           working_directory: ./backend
-          command: npm run build
+          command:
+          npm cache clean
+          rm -rf node_modules
+          npm install
+          npm run build
       - persist_to_workspace:
           root: .
           paths:

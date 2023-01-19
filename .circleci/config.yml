@@ -82,22 +82,18 @@ commands:
 
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
-      - restore_cache:
-          keys: [frontend-deps]
       - run:
-          name: Build front-end
-          command: |
-            cd frontend
-            npm i
-            npm run build
-            pwd && ls -al
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-deps
+          name: npm install
+          working_directory: ./backend
+          command: 
+                ls -la && npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/node_modules
 
   build-backend:
     docker:
@@ -105,17 +101,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-deps]
+          keys: [backend-build]
       - run:
           name: Back-end build
           command: |
             cd backend
             npm install
             npm run build
-            cat /home/circleci/.npm/_logs/2023-01*debug.log
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-deps
+          key: backend-build
 
   test-frontend:
     docker:

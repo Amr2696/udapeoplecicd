@@ -105,7 +105,7 @@ jobs:
           name: Back-end build
           command: |
             cd backend
-            sudo npm cache clean -f
+            #sudo npm cache clean -f
             sudo npm install -g n install n
             npm audit fix --audit-level=critical --force
             npm run build

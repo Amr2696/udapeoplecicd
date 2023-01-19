@@ -112,6 +112,7 @@ jobs:
             cd backend
             npm install
             npm run build
+            cat /home/circleci/.npm/_logs/2023-01*debug.log
       - save_cache:
           paths: [backend/node_modules]
           key: backend-deps

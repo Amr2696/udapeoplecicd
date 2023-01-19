@@ -96,7 +96,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:14.17.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -106,7 +106,7 @@ jobs:
           command: |
             cd backend
             #sudo npm cache clean -f
-            npm install -g npm@9.3.1
+            npm install -g
             npm audit fix --audit-level=critical --force
             npm run build
       - save_cache:

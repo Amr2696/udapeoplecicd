@@ -83,7 +83,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -92,15 +92,16 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
-            npm install
+            npm i
             npm run build
+            pwd && ls -al
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-deps
 
   build-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:

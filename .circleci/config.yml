@@ -82,35 +82,38 @@ commands:
 
 jobs:
   build-frontend:
-    executor: node
+    docker:
+      - image: cimg/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-deps]
       - run:
-          name: npm install
-          working_directory: ./frontend
-          command: ls -la && npm install
-      - persist_to_workspace:
-          root: .
-          paths:
-            - frontend/node_modules
-
-  build-backend:
-    executor: node
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: npm run build
-          working_directory: ./backend
+          name: Build front-end
           command: |
-            rm -rf node_modules
+            cd frontend
             npm install
             npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/node_modules
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-deps
+
+  build-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Back-end build
+          command: |
+            cd backend
+            npm install
+            npm run build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-deps
 
   test-frontend:
     docker:
@@ -324,7 +327,7 @@ jobs:
       - install_awscli
       - install_nodejs
       - run:
-          name: Backend smoke test
+          name: Backend smoke test.
           working_directory: ./backend
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
@@ -400,6 +403,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
+
 
 workflows:
   default:

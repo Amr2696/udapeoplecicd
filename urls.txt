@@ -1,0 +1,7 @@
+Public Url to GitHub repository (not private) [URL01]
+    https://github.com/Amr2696/udapeoplecicd
+Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
+    http://udapeople-f109628.s3-website-us-east-1.amazonaws.com
+
+Evidence of deployed and functioning Frontend in CloudFront. [URL03]
+    d32gr63tr6ykx8.cloudfront.net
